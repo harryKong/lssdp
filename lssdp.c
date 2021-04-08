@@ -604,6 +604,12 @@ static int send_multicast_data(const char * data, const struct lssdp_interface i
         goto end;
     }
 
+    unsigned char ttl = 255;
+    if (setsockopt(fd, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl)) < 0) {
+        lssdp_error("setsockopt IP_MULTICAST_TTL failed, errno = %s (%d)\n", strerror(errno), errno);
+        goto end;
+    }
+
     // 4. set destination address
     struct sockaddr_in dest_addr = {
         .sin_family = AF_INET,
